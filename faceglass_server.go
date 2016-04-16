@@ -69,11 +69,41 @@ func changeUser(w http.ResponseWriter, r *http.Request) {
     
     fmt.Fprintf(w, "%v", handler.Header)
     vars := mux.Vars(r)
-    userID := vars["userId"]
+    userID, err := strconv.Atoi(vars["userId"])
+    if err != nil {
+        w.WriteHeader(http.StatusNotFound)
+        return
+    }
+    
+    var foundUser User
+    
+    foundUser.ID = -1
+    var foundUserIndex = -1
+    
+    for index,user := range users {
+        if user.ID == userID {
+            foundUser = user
+            foundUserIndex = index;
+            break
+        }
+    } 
+    
+    if foundUser.ID == -1 {
+        w.WriteHeader(http.StatusNotFound)
+        return
+    }
+    
+    users[foundUserIndex].Name = r.FormValue("user_name");
+    users[foundUserIndex].Text = r.FormValue("user_comment");
+    users[foundUserIndex].Email = r.FormValue("user_email");
+    users[foundUserIndex].Status = "Available";
+    
 
-    os.MkdirAll("./asset/users/" + userID, 0777);
+    userIDStr := strconv.Itoa(userID)
+    
+    os.MkdirAll("./asset/users/" + userIDStr, 0777);
 
-    f, err := os.OpenFile("./asset/users/" + userID + "/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+    f, err := os.OpenFile("./asset/users/" + userIDStr + "/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
     if err != nil {
         fmt.Println(err)
         return
@@ -108,11 +138,11 @@ func addUser(w http.ResponseWriter, r *http.Request) {
     
     users = append(users, newUser)   
 
-    userIdStr := strconv.Itoa(userID)
+    userIDStr := strconv.Itoa(userID)
     
-    os.MkdirAll("./asset/users/" + userIdStr, 0777);
+    os.MkdirAll("./asset/users/" + userIDStr, 0777);
 
-    f, err := os.OpenFile("./asset/users/" + userIdStr + "/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+    f, err := os.OpenFile("./asset/users/" + userIDStr + "/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
     if err != nil {
         fmt.Println(err)
         return
