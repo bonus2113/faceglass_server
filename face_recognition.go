@@ -1,6 +1,6 @@
 package main
 // #cgo CPPFLAGS: -IC:/libs/opencv/build/include
-// #cgo LDFLAGS:-lstdc++
+// #cgo LDFLAGS: -L${SRCDIR} -lstdc++ -lface_recognition
 // #include "face_recognition.hpp"
 import "C"
 

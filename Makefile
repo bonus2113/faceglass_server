@@ -1,11 +1,11 @@
 .PHONY: clean
 
-TARGET=faceglass_server
+TARGET=face_recognition
 
-$(TARGET): libfoo.a
+$(TARGET): face_recognition.a
 	go build .
 
-libfoo.a: foo.o cfoo.o
+face_recognition.a: face_recognition.o
 	ar r $@ $^
 
 %.o: %.cpp
