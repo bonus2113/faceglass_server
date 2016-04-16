@@ -45,6 +45,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 func addUser(w http.ResponseWriter, r *http.Request) {
     fmt.Println("method:", r.Method)
     r.ParseMultipartForm(32 << 20)
+    fmt.Println(r.Body);
     file, handler, err := r.FormFile("image")
     if err != nil {
         fmt.Println(err)
