@@ -22,13 +22,14 @@ type Users []User
 
 func main() {
     
-    router := mux.NewRouter().StrictSlash(true
-    router.Handle("/", http.FileServer(http.Dir("./asset")))
+    router := mux.NewRouter().StrictSlash(true)
+    
+    router.PathPrefix("/asset/").Handler( http.StripPrefix("/asset/", http.FileServer(http.Dir("./asset/"))) )
   
-    router.HandleFunc("/label", getLabelHandler).Methods("GET")
-    router.HandleFunc("/users", userIndex)
-    router.HandleFunc("/users/{userId}", userShow).Methods("GET")
-    router.HandleFunc("/users/{userId}", addUser).Methods("POST")
+    router.HandleFunc("/api/label", getLabelHandler).Methods("GET")
+    router.HandleFunc("/api/users", userIndex)
+    router.HandleFunc("/api/users/{userId}", userShow).Methods("GET")
+    router.HandleFunc("/api/users/{userId}", addUser).Methods("POST")
  
     os.MkdirAll("./asset/users", 0777)
     
