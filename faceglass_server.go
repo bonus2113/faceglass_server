@@ -16,9 +16,17 @@ type User struct {
     Name      string
     Text      string
     Status    string
+    Email     string
 }
 
 type Users []User
+
+var users Users = Users{
+    User{ID: 0, Name: "dario", Text: "programmer, backend", Status: "DnD", Email: ""},
+    User{ID: 1, Name: "alexander", Text: "programmer, frontend", Status: "Come talk to me", Email: ""},
+    User{ID: 2, Name: "yan_wo", Text: "programmer, frontend", Status: "DnD", Email: ""},
+    User{ID: 3, Name: "jenny_li", Text: "designer", Status: "BrB", Email: ""},
+}
 
 func main() {
     
@@ -27,9 +35,10 @@ func main() {
     router.PathPrefix("/asset/").Handler( http.StripPrefix("/asset/", http.FileServer(http.Dir("./asset/"))) )
   
     router.HandleFunc("/label", getLabelHandler).Methods("GET")
-    router.HandleFunc("/users", userIndex)
+    router.HandleFunc("/users", userIndex).Methods("GET")
+    router.HandleFunc("/users", addUser).Methods("POST")
     router.HandleFunc("/users/{userId}", userShow).Methods("GET")
-    router.HandleFunc("/users/{userId}", addUser).Methods("POST")
+    router.HandleFunc("/users/{userId}", changeUser).Methods("POST")
  
     os.MkdirAll("./asset/users", 0777)
     
@@ -46,7 +55,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 // upload logic
-func addUser(w http.ResponseWriter, r *http.Request) {
+func changeUser(w http.ResponseWriter, r *http.Request) {
     fmt.Println("method:", r.Method)
     r.ParseMultipartForm(32 << 20)
     fmt.Println(r.Form.Encode());
@@ -73,14 +82,46 @@ func addUser(w http.ResponseWriter, r *http.Request) {
     io.Copy(f, file)
 }
 
-func userIndex(w http.ResponseWriter, r *http.Request) {
-    users := Users{
-        User{ID: 0, Name: "dario", Text: "programmer, backend", Status: "DnD"},
-        User{ID: 1, Name: "alexander", Text: "programmer, frontend", Status: "Come talk to me"},
-        User{ID: 2, Name: "yan_wo", Text: "programmer, frontend", Status: "DnD"},
-        User{ID: 3, Name: "jenny_li", Text: "designer", Status: "BrB"},
+// upload logic
+func addUser(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("method:", r.Method)
+    r.ParseMultipartForm(32 << 20)
+    fmt.Println(r.Form.Encode());
+    file, handler, err := r.FormFile("image")
+    if err != nil {
+        fmt.Println(err)
+        return
     }
+    defer file.Close()
+    
+    
+    fmt.Fprintf(w, "%v", handler.Header)
 
+    userID := len(users)
+    
+    var newUser User;
+    newUser.ID = userID;
+    newUser.Name = r.FormValue("user_name");
+    newUser.Text = r.FormValue("user_comment");
+    newUser.Email = r.FormValue("user_email");
+    newUser.Status = "Available";
+    
+    users = append(users, newUser)   
+
+    userIdStr := strconv.Itoa(userID)
+    
+    os.MkdirAll("./asset/users/" + userIdStr, 0777);
+
+    f, err := os.OpenFile("./asset/users/" + userIdStr + "/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    defer f.Close()
+    io.Copy(f, file)
+}
+
+func userIndex(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
     w.WriteHeader(http.StatusOK)
     if err := json.NewEncoder(w).Encode(users); err != nil {
@@ -94,13 +135,6 @@ func userShow(w http.ResponseWriter, r *http.Request) {
     if err != nil {
         w.WriteHeader(http.StatusNotFound)
         return
-    }
-    
-    users := Users{
-        User{ID: 0, Name: "dario", Text: "programmer, backend", Status: "DnD"},
-        User{ID: 1, Name: "alexander", Text: "programmer, frontend", Status: "Come talk to me"},
-        User{ID: 2, Name: "yan_wo", Text: "programmer, frontend", Status: "DnD"},
-        User{ID: 3, Name: "jenny_li", Text: "designer", Status: "BrB"},
     }
     
     var foundUser User
