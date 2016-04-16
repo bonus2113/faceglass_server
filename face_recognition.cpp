@@ -26,6 +26,6 @@ static void read_csv(const string& filename, vector<Mat>& images, vector<int>& l
 	}
 }
 
-int get_label(int label) {
+/*int get_label(int label) {
 	return label;
-}
+}*/

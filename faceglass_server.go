@@ -22,14 +22,15 @@ type Users []User
 
 func main() {
     
-    router := mux.NewRouter().StrictSlash(true)
-    router.HandleFunc("/", index)
-    router.HandleFunc("/label", getLabelHandler).Methods("GET");
+    router := mux.NewRouter().StrictSlash(true
+    router.Handle("/", http.FileServer(http.Dir("./asset")))
+  
+    router.HandleFunc("/label", getLabelHandler).Methods("GET")
     router.HandleFunc("/users", userIndex)
     router.HandleFunc("/users/{userId}", userShow).Methods("GET")
     router.HandleFunc("/users/{userId}", addUser).Methods("POST")
-    
-    os.MkdirAll("./asset/users", 0777);
+ 
+    os.MkdirAll("./asset/users", 0777)
     
     fmt.Println("Serving content at :8080")
     log.Fatal(http.ListenAndServe(":8080", router))
