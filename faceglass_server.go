@@ -1,98 +1,84 @@
 package main
 
 import (
+    "fmt"
     "log"
     "net/http"
-    "github.com/googollee/go-socket.io"
+    "strconv"
+    "encoding/json"
+    "github.com/gorilla/mux"
 )
 
-type player struct {
-    id int;
-    socket socketio.Socket;
+type User struct {
+    ID        int
+    Name      string
+    Text      string
 }
 
+type Users []User
+
 func main() {
-    server, err := socketio.NewServer(nil)
+    router := mux.NewRouter().StrictSlash(true)
+    router.HandleFunc("/", index)
+    router.HandleFunc("/users", userIndex)
+    router.HandleFunc("/users/{userId}", userShow)
+
+    log.Fatal(http.ListenAndServe(":8080", router))
+}
+
+func index(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintln(w, "Welcome!")
+}
+
+func userIndex(w http.ResponseWriter, r *http.Request) {
+    users := Users{
+        User{Name: "dario", Text: "programmer, backend"},
+        User{Name: "alexander", Text: "programmer, frontend"},
+        User{Name: "yan_wo", Text: "programmer, frontend"},
+        User{Name: "jenny_li", Text: "designer"},
+    }
+
+    w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    w.WriteHeader(http.StatusOK)
+    if err := json.NewEncoder(w).Encode(users); err != nil {
+        panic(err)
+    }
+}
+
+func userShow(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    userID, err := strconv.Atoi(vars["userId"])
     if err != nil {
-        log.Fatal(err)
+        w.WriteHeader(http.StatusNotFound)
+        return
     }
     
-    var MAX_NUMBERS_OF_PLAYERS int = 5
-
-    var players [5]player;
-    
-    var main_client socketio.Socket;
-    
-    for i := 0; i < MAX_NUMBERS_OF_PLAYERS; i++ {
-        players[i].id = -1
+    users := Users{
+        User{ID: 0, Name: "dario", Text: "programmer, backend"},
+        User{ID: 1, Name: "alexander", Text: "programmer, frontend"},
+        User{ID: 2, Name: "yan_wo", Text: "programmer, frontend"},
+        User{ID: 3, Name: "jenny_li", Text: "designer"},
     }
     
-    server.On("connection", func(so socketio.Socket) {
-        log.Println("on connection")
-        so.Join("spacejunk")
-        
-        so.On("spacejunk player", func(msg string) {
-            var freeId int = -1
-                    
-            for i := 0; i < MAX_NUMBERS_OF_PLAYERS; i++ {
-                if players[i].id == -1 {
-                    freeId = i                
-                    break
-                }
-            }
-            
-            if freeId == -1 {
-                so.Emit("disconnect")
-                return
-            }
-            
-            players[freeId].id = freeId;
-            players[freeId].socket = so;
-            
-            so.Emit("spacejunk accept", freeId)
-            
-            for i := 0; i < MAX_NUMBERS_OF_PLAYERS; i++ {
-                if players[i].id != -1 {
-                    so.Emit("spacejunk newPlayer", i)              
-                }
-            }
-            
-            so.BroadcastTo("spacejunk", "spacejunk newPlayer", freeId)
-            
-            so.On("spacejunk shootPlayer", func(msg string) {
-                log.Println(msg)
-                so.Emit("spacejunk shootPlayer", msg)
-                so.BroadcastTo("spacejunk", "spacejunk shootPlayer", msg)
-            })
-            
-            so.On("spacejunk shootRocket", func(msg string) {
-                so.BroadcastTo("spacejunk", "spacejunk shootRocket", msg)
-            })
-            
-            so.On("disconnection", func() {
-                log.Println("on disconnect")
-                players[freeId].id = -1
-                so.BroadcastTo("spacejunk", "spacejunk playerLeft", freeId)
-            })
-        })
-        
-        so.On("spacejunk server", func(msg string) {
-            for i := 0; i < MAX_NUMBERS_OF_PLAYERS; i++ {
-                if players[i].id != -1 {
-                    so.Emit("spacejunk newPlayer", i)              
-                }
-            }
-            
-            main_client = so
-        })
-    })
+    var foundUser User
     
-    server.On("error", func(so socketio.Socket, err error) {
-        log.Println("error:", err)
-    })
+    foundUser.ID = -1
+    
+    for _,user := range users {
+        if user.ID == userID {
+            foundUser = user
+            break
+        }
+    } 
+    
+    if foundUser.ID == -1 {
+        w.WriteHeader(http.StatusNotFound)
+        return
+    }
 
-    http.Handle("/socket.io/", server)
-    http.Handle("/", http.FileServer(http.Dir("./asset")))
-    log.Println("Serving at localhost:8080...")
-    log.Fatal(http.ListenAndServe(":8080", nil))
+    w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    w.WriteHeader(http.StatusOK)
+    if err := json.NewEncoder(w).Encode(foundUser); err != nil {
+        panic(err)
+    }
 }
