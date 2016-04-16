@@ -26,10 +26,10 @@ func main() {
     
     router.PathPrefix("/asset/").Handler( http.StripPrefix("/asset/", http.FileServer(http.Dir("./asset/"))) )
   
-    router.HandleFunc("/api/label", getLabelHandler).Methods("GET")
-    router.HandleFunc("/api/users", userIndex)
-    router.HandleFunc("/api/users/{userId}", userShow).Methods("GET")
-    router.HandleFunc("/api/users/{userId}", addUser).Methods("POST")
+    router.HandleFunc("/label", getLabelHandler).Methods("GET")
+    router.HandleFunc("/users", userIndex)
+    router.HandleFunc("/users/{userId}", userShow).Methods("GET")
+    router.HandleFunc("/users/{userId}", addUser).Methods("POST")
  
     os.MkdirAll("./asset/users", 0777)
     
