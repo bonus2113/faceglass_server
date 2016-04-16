@@ -34,7 +34,7 @@ func main() {
     
     router.PathPrefix("/asset/").Handler( http.StripPrefix("/asset/", http.FileServer(http.Dir("./asset/"))) )
   
-    router.HandleFunc("/label", getLabelHandler).Methods("GET")
+    router.HandleFunc("/label", getLabelHandler)
     router.HandleFunc("/users", userIndex).Methods("GET")
     router.HandleFunc("/users", addUser).Methods("POST")
     router.HandleFunc("/users/{userId}", userShow).Methods("GET")
@@ -47,7 +47,9 @@ func main() {
 }
 
 func getLabelHandler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintln(w, getLabel(10));
+    if err := json.NewEncoder(w).Encode(users[0]); err != nil {
+        panic(err)
+    }
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
