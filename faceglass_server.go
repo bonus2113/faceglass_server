@@ -21,6 +21,7 @@ type User struct {
 type Users []User
 
 func main() {
+    
     router := mux.NewRouter().StrictSlash(true)
     router.HandleFunc("/", index)
     router.HandleFunc("/label", getLabelHandler).Methods("GET");
@@ -30,6 +31,7 @@ func main() {
     
     os.MkdirAll("./asset/users", 0777);
     
+    fmt.Println("Serving content at :8080")
     log.Fatal(http.ListenAndServe(":8080", router))
 }
 
