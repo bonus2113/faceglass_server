@@ -1,6 +1,7 @@
 package main
+// #cgo pkg-config: opencv
 // #cgo CPPFLAGS: -IC:/libs/opencv/build/include
-// #cgo LDFLAGS: -lstdc++  -lopencv2
+// #cgo LDFLAGS: -lstdc++  
 // #include "face_recognition.h"
 import "C"
 
