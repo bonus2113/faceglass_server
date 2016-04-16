@@ -24,7 +24,9 @@ func main() {
     router.HandleFunc("/", index)
     router.HandleFunc("/users", userIndex)
     router.HandleFunc("/users/{userId}", userShow).Methods("GET")
-    router.HandleFunc("/users/{userId}", upload).Methods("POST")
+    router.HandleFunc("/users/{userId}", addUser).Methods("POST")
+    
+    os.MkdirAll("./asset/users", 0777);
     
     log.Fatal(http.ListenAndServe(":8080", router))
 }
@@ -36,7 +38,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 
 // upload logic
-func upload(w http.ResponseWriter, r *http.Request) {
+func addUser(w http.ResponseWriter, r *http.Request) {
     fmt.Println("method:", r.Method)
     r.ParseMultipartForm(32 << 20)
     file, handler, err := r.FormFile("image")
@@ -50,6 +52,8 @@ func upload(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "%v", handler.Header)
     vars := mux.Vars(r)
     userID := vars["userId"]
+
+    os.MkdirAll("./asset/users/" + userID, 0777);
 
     f, err := os.OpenFile("./asset/users/" + userID + "/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
     if err != nil {
