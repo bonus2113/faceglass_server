@@ -1,6 +1,6 @@
 package main
 
-// #include "face_recognition.h"
+// #include "face_recognition.hh"
 import "C"
 
 
