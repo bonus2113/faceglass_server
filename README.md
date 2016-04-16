@@ -1,2 +1,2 @@
-# spacejunk_server
-Server for spacejunk
+# faceglass_server
+Server for AR face recoginition
