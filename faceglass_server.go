@@ -15,6 +15,7 @@ type User struct {
     ID        int
     Name      string
     Text      string
+    Status    string
 }
 
 type Users []User
@@ -22,6 +23,7 @@ type Users []User
 func main() {
     router := mux.NewRouter().StrictSlash(true)
     router.HandleFunc("/", index)
+    router.HandleFunc("/label", getLabelHandler).Methods("GET");
     router.HandleFunc("/users", userIndex)
     router.HandleFunc("/users/{userId}", userShow).Methods("GET")
     router.HandleFunc("/users/{userId}", addUser).Methods("POST")
@@ -31,11 +33,13 @@ func main() {
     log.Fatal(http.ListenAndServe(":8080", router))
 }
 
+func getLabelHandler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintln(w, getLabel(10));
+}
+
 func index(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintln(w, "Welcome!")
 }
-
-
 
 // upload logic
 func addUser(w http.ResponseWriter, r *http.Request) {
@@ -66,10 +70,10 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 
 func userIndex(w http.ResponseWriter, r *http.Request) {
     users := Users{
-        User{Name: "dario", Text: "programmer, backend"},
-        User{Name: "alexander", Text: "programmer, frontend"},
-        User{Name: "yan_wo", Text: "programmer, frontend"},
-        User{Name: "jenny_li", Text: "designer"},
+        User{ID: 0, Name: "dario", Text: "programmer, backend", Status: "DnD"},
+        User{ID: 1, Name: "alexander", Text: "programmer, frontend", Status: "Come talk to me"},
+        User{ID: 2, Name: "yan_wo", Text: "programmer, frontend", Status: "DnD"},
+        User{ID: 3, Name: "jenny_li", Text: "designer", Status: "BrB"},
     }
 
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -88,10 +92,10 @@ func userShow(w http.ResponseWriter, r *http.Request) {
     }
     
     users := Users{
-        User{ID: 0, Name: "dario", Text: "programmer, backend"},
-        User{ID: 1, Name: "alexander", Text: "programmer, frontend"},
-        User{ID: 2, Name: "yan_wo", Text: "programmer, frontend"},
-        User{ID: 3, Name: "jenny_li", Text: "designer"},
+        User{ID: 0, Name: "dario", Text: "programmer, backend", Status: "DnD"},
+        User{ID: 1, Name: "alexander", Text: "programmer, frontend", Status: "Come talk to me"},
+        User{ID: 2, Name: "yan_wo", Text: "programmer, frontend", Status: "DnD"},
+        User{ID: 3, Name: "jenny_li", Text: "designer", Status: "BrB"},
     }
     
     var foundUser User

@@ -1,4 +1,4 @@
-#include "face_recognition.hh"
+#include "face_recognition.hpp"
 #include <opencv2/highgui/highgui.hpp>
 #include "opencv2/core/core.hpp"
 #include <iostream>
@@ -7,7 +7,6 @@
 
 using namespace cv;
 using namespace std;
-
 
 static void read_csv(const string& filename, vector<Mat>& images, vector<int>& labels, char separator = ';') {
 	std::ifstream file(filename.c_str(), ifstream::in);
@@ -25,8 +24,4 @@ static void read_csv(const string& filename, vector<Mat>& images, vector<int>& l
 			labels.push_back(atoi(classlabel.c_str()));
 		}
 	}
-}
-
-int get_label(int label) {
-	return label;
 }
