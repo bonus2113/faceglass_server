@@ -1,5 +1,6 @@
 #include "face_recognition.hpp"
 #include <opencv2/highgui/highgui.hpp>
+#include "opencv2/contrib/contrib.hpp"
 #include <opencv2/core/core.hpp>
 #include <iostream>
 #include <fstream>
@@ -43,6 +44,6 @@ int get_label(int id) {
 	// images for first person
 	images.push_back(imread("./asset/"+id_str+"/user_farss.png", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(0);
 	
-	/*Ptr<FaceRecognizer> model =  createFisherFaceRecognizer();
-	model->train(images, labels);*/
+	Ptr<FaceRecognizer> model =  createFisherFaceRecognizer();
+	model->train(images, labels);
 }
