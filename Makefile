@@ -3,7 +3,7 @@
 TARGET=face_recognition
 
 $(TARGET): face_recognition.a
-	go build .
+	go build -x .
 
 face_recognition.a: face_recognition.o
 	ar r $@ $^
