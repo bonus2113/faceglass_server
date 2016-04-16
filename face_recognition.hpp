@@ -1,1 +1,4 @@
-int get_label(int label);
+extern "C" {
+  int get_label(int label);
+}
+
