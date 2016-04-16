@@ -1,12 +1,20 @@
 #include "face_recognition.hpp"
 #include <opencv2/highgui/highgui.hpp>
-#include "opencv2/core/core.hpp"
+#include <opencv2/core/core.hpp>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
+#include <string>
 
 using namespace cv;
 using namespace std;
+
+std::string to_string(int val) {
+	std::stringstream ss;
+	ss << val;
+	return ss.str();
+}
 
 static void read_csv(const string& filename, vector<Mat>& images, vector<int>& labels, char separator = ';') {
 	std::ifstream file(filename.c_str(), ifstream::in);
@@ -26,6 +34,15 @@ static void read_csv(const string& filename, vector<Mat>& images, vector<int>& l
 	}
 }
 
-int get_label(int label) {
-	return label;
+int get_label(int id) {
+	std::string id_str = to_string(id);
+	
+	// holds images and labels
+	vector<Mat> images;
+	vector<int> labels;
+	// images for first person
+	images.push_back(imread("./asset/"+id_str+"/user_farss.png", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(0);
+	
+	/*Ptr<FaceRecognizer> model =  createFisherFaceRecognizer();
+	model->train(images, labels);*/
 }

@@ -1,4 +1,4 @@
 extern "C" {
-  int get_label(int label);
+  int get_label(int id);
 }
 

@@ -1,1 +1,1 @@
-extern int get_label(int label);
+extern int get_label(int id);
