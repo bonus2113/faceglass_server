@@ -52,7 +52,7 @@ func getLabelHandler(w http.ResponseWriter, r *http.Request) {
     
     r.ParseMultipartForm(32 << 20)
     fmt.Println(r.Form.Encode());
-    file, handler, err := r.FormFile("image")
+    file, _, err := r.FormFile("image")
     if err != nil {
         fmt.Println(err)
         return
@@ -60,7 +60,7 @@ func getLabelHandler(w http.ResponseWriter, r *http.Request) {
     defer file.Close()
     
     tmpFile, _ := ioutil.TempFile("./asset/tmp/", "cmp");
-    filename := "./asset/tmp/" + tmpFile.Name;
+    filename := tmpFile.Name();
     defer tmpFile.Close();
     defer os.Remove(filename);
     
@@ -68,7 +68,7 @@ func getLabelHandler(w http.ResponseWriter, r *http.Request) {
     
     userID := getLabel(filename)
     
-    if err := json.NewEncoder(w).Encode(users[getLabel(0)]); err != nil {
+    if err := json.NewEncoder(w).Encode(users[userID]); err != nil {
         panic(err)
     }
 }

@@ -46,7 +46,7 @@ void init_model() {
 
 void update_model(int id, char* file) {
 	std::string id_str(file);
-	
+        cout << id_str << endl;	
         // images for first person
 	images.push_back(imread(id_str, CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(id);
 	
@@ -54,5 +54,6 @@ void update_model(int id, char* file) {
 }
 
 int get_label(char* file) {
+        cout << file << endl;
 	return model->predict(imread(file, CV_LOAD_IMAGE_GRAYSCALE));
 }
