@@ -23,12 +23,14 @@ type User struct {
 type Users []User
 
 var users Users = Users{
-    User{ID: 0, Name: "Dario", Text: "programmer, backend", Status: "Hi there!", Email: "@daseyb"},
-    User{ID: 1, Name: "Yan Wo", Text: "programmer, frontend", Status: "Do not disturb!", Email: "gmail@me.de"},
+    User{ID: 0, Name: "Dario", Text: "programmer", Status: "Hi there!", Email: "@daseyb"},
+    User{ID: 1, Name: "Yan Wo", Text: "programmer", Status: "Do not disturb!", Email: "gmail@me.de"},
     User{ID: 2, Name: "Jenny Li", Text: "designer", Status: "Happy to help!", Email: "hi@jenny.org"},
-    User{ID: 3, Name: "Alex", Text: "programmer, frontend", Status: "Come talk to me", Email: "sonme@email.com"},
-    User{ID: 4, Name: "Alex", Text: "programmer, frontend", Status: "Come talk to me", Email: "sonme@email.com"},
+    User{ID: 3, Name: "Alex", Text: "programmer", Status: "Come talk to me", Email: "sonme@email.com"},
+    User{ID: 4, Name: "Alex", Text: "programmer", Status: "Come talk to me", Email: "sonme@email.com"},
 }
+
+var invalidUser := User {ID: -1, Name: "Try again!", Text: "", Status: "", Email: "" }
 
 func main() {
     initModel() 
@@ -77,7 +79,15 @@ func getLabelHandler(w http.ResponseWriter, r *http.Request) {
     
     userID := getLabel(filename)
     
-    if err := json.NewEncoder(w).Encode(users[userID]); err != nil {
+    var matchedUser User
+    
+    if userID != -1 {
+        matchedUser = users[userID]
+    } else {
+        matchedUser = invalidUser;
+    }
+    
+    if err := json.NewEncoder(w).Encode(matchedUser); err != nil {
         panic(err)
     }
 }
