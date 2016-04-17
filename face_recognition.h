@@ -1,3 +1,3 @@
 extern void init_model();
 extern void update_model(int id, char* file);
-extern int get_label(int id);
+extern int get_label(char* file);

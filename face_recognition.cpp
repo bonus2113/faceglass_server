@@ -53,6 +53,6 @@ void update_model(int id, char* file) {
 	model->train(images, labels); 
 }
 
-int get_label(int id) {
-	return 0;
+int get_label(char* file) {
+	return model->predict(imread(file, CV_LOAD_IMAGE_GRAYSCALE));
 }

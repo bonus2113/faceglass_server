@@ -12,6 +12,6 @@ func updateModel(id int, file string) {
     C.update_model(C.int(id), C.CString(file));
 }
 
-func getLabel(lb int) int {
-    return int(C.get_label(C.int(lb)))
+func getLabel(file string) int {
+    return int(C.get_label(C.CString(file)))
 }

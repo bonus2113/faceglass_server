@@ -9,6 +9,7 @@ import (
     "encoding/json"
     "github.com/gorilla/mux"
     "os"
+    "io/ioutil"
 )
 
 type User struct {
@@ -41,12 +42,32 @@ func main() {
     router.HandleFunc("/users/{userId}", changeUser).Methods("POST")
  
     os.MkdirAll("./asset/users", 0777)
+    os.MkdirAll("./asset/tmp", 0777)
     
     fmt.Println("Serving content at :8080")
     log.Fatal(http.ListenAndServe(":8080", router))
 }
 
 func getLabelHandler(w http.ResponseWriter, r *http.Request) {
+    
+    r.ParseMultipartForm(32 << 20)
+    fmt.Println(r.Form.Encode());
+    file, handler, err := r.FormFile("image")
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    defer file.Close()
+    
+    tmpFile, _ := ioutil.TempFile("./asset/tmp/", "cmp");
+    filename := "./asset/tmp/" + tmpFile.Name;
+    defer tmpFile.Close();
+    defer os.Remove(filename);
+    
+    io.Copy(tmpFile, file);
+    
+    userID := getLabel(filename)
+    
     if err := json.NewEncoder(w).Encode(users[getLabel(0)]); err != nil {
         panic(err)
     }
