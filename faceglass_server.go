@@ -23,16 +23,24 @@ type User struct {
 type Users []User
 
 var users Users = Users{
-    User{ID: 0, Name: "dario", Text: "programmer, backend", Status: "DnD", Email: ""},
-    User{ID: 1, Name: "alexander", Text: "programmer, frontend", Status: "Come talk to me", Email: ""},
-    User{ID: 2, Name: "yan_wo", Text: "programmer, frontend", Status: "DnD", Email: ""},
-    User{ID: 3, Name: "jenny_li", Text: "designer", Status: "BrB", Email: ""},
+    User{ID: 0, Name: "Dario", Text: "programmer, backend", Status: "Hi there!", Email: "@daseyb"},
+    User{ID: 1, Name: "Yan Wo", Text: "programmer, frontend", Status: "Do not disturb!", Email: "gmail@me.de"},
+    User{ID: 2, Name: "Jenny Li", Text: "designer", Status: "Happy to help!", Email: "hi@jenny.org"},
+    User{ID: 3, Name: "Alex", Text: "programmer, frontend", Status: "Come talk to me", Email: "sonme@email.com"},
+    User{ID: 4, Name: "Alex", Text: "programmer, frontend", Status: "Come talk to me", Email: "sonme@email.com"},
 }
 
 func main() {
     initModel() 
     router := mux.NewRouter().StrictSlash(true)
     
+    for _, user .= range users {
+        files, _ := ioutil.ReadDir(fmt.Sprintf("./asset/users/%i", user.ID)
+        for _, f := range files {
+            fmt.Println(f.Name())
+        }
+    }
+
     router.PathPrefix("/asset/").Handler( http.StripPrefix("/asset/", http.FileServer(http.Dir("./asset/"))) )
   
     router.HandleFunc("/label", getLabelHandler)
