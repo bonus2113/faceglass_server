@@ -29,7 +29,7 @@ var users Users = Users{
 }
 
 func main() {
-    
+    initModel() 
     router := mux.NewRouter().StrictSlash(true)
     
     router.PathPrefix("/asset/").Handler( http.StripPrefix("/asset/", http.FileServer(http.Dir("./asset/"))) )
@@ -47,7 +47,7 @@ func main() {
 }
 
 func getLabelHandler(w http.ResponseWriter, r *http.Request) {
-    if err := json.NewEncoder(w).Encode(users[0]); err != nil {
+    if err := json.NewEncoder(w).Encode(users[getLabel(0)]); err != nil {
         panic(err)
     }
 }
@@ -104,14 +104,15 @@ func changeUser(w http.ResponseWriter, r *http.Request) {
     userIDStr := strconv.Itoa(userID)
     
     os.MkdirAll("./asset/users/" + userIDStr, 0777);
-
-    f, err := os.OpenFile("./asset/users/" + userIDStr + "/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+    filename := "./asset/users/" + userIDStr + "/" + handler.Filename;
+    f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
     if err != nil {
         fmt.Println(err)
         return
     }
     defer f.Close()
     io.Copy(f, file)
+    updateModel(userID, filename);
 }
 
 // upload logic
@@ -143,14 +144,15 @@ func addUser(w http.ResponseWriter, r *http.Request) {
     userIDStr := strconv.Itoa(userID)
     
     os.MkdirAll("./asset/users/" + userIDStr, 0777);
-
-    f, err := os.OpenFile("./asset/users/" + userIDStr + "/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+    filename := "./asset/users/" + userIDStr + "/" + handler.Filename;
+    f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
     if err != nil {
         fmt.Println(err)
         return
     }
     defer f.Close()
     io.Copy(f, file)
+    updateModel(userID, filename);
 }
 
 func userIndex(w http.ResponseWriter, r *http.Request) {

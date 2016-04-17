@@ -1,6 +1,6 @@
 #include "face_recognition.hpp"
 #include <opencv2/highgui/highgui.hpp>
-#include "opencv2/contrib/contrib.hpp"
+#include <opencv2/face.hpp>
 #include <opencv2/core/core.hpp>
 #include <iostream>
 #include <fstream>
@@ -10,6 +10,7 @@
 
 using namespace cv;
 using namespace std;
+using namespace face;
 
 std::string to_string(int val) {
 	std::stringstream ss;
@@ -35,15 +36,23 @@ static void read_csv(const string& filename, vector<Mat>& images, vector<int>& l
 	}
 }
 
+Ptr<FaceRecognizer> model;
+vector<Mat> images;
+vector<int> labels;
+
+void init_model() {
+	model = createLBPHFaceRecognizer();
+}
+
+void update_model(int id, char* file) {
+	std::string id_str(file);
+	
+        // images for first person
+	images.push_back(imread(id_str, CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(id);
+	
+	model->train(images, labels); 
+}
+
 int get_label(int id) {
-	std::string id_str = to_string(id);
-	
-	// holds images and labels
-	vector<Mat> images;
-	vector<int> labels;
-	// images for first person
-	images.push_back(imread("./asset/"+id_str+"/user_farss.png", CV_LOAD_IMAGE_GRAYSCALE)); labels.push_back(0);
-	
-	Ptr<FaceRecognizer> model =  createFisherFaceRecognizer();
-	model->train(images, labels);
+	return 0;
 }
