@@ -34,10 +34,11 @@ func main() {
     initModel() 
     router := mux.NewRouter().StrictSlash(true)
     
-    for _, user .= range users {
-        files, _ := ioutil.ReadDir(fmt.Sprintf("./asset/users/%i", user.ID)
+    for _, user := range users {
+        filename := fmt.Sprintf("./asset/users/%[1]d", user.ID)
+        files, _ := ioutil.ReadDir(filename)
         for _, f := range files {
-            fmt.Println(f.Name())
+            updateModel(user.ID, filename + "/" + f.Name())
         }
     }
 
